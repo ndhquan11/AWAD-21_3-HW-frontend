@@ -3,21 +3,26 @@ import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    
-    toast.info('Logging in...');
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    // register logic
+    toast.info('Registering...');
   };
 
   return (
     <Container maxWidth="sm">
       <Box display="flex" flexDirection="column" alignItems="center" mt={8}>
         <Typography variant="h4" gutterBottom>
-          Login
+          Register
         </Typography>
         <TextField
           label="Email"
@@ -36,27 +41,34 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <TextField
+          label="Confirm Password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
         <Button
           variant="contained"
           color="primary"
           fullWidth
-          onClick={handleLogin}
-          sx={{ mt: 2 }}
-        >
-          Login
-        </Button>
-        <Button
-          variant="text"
-          color="primary"
-          fullWidth
-          onClick={() => navigate('/register')}
+          onClick={handleRegister}
           sx={{ mt: 2 }}
         >
           Register
+        </Button>
+        <Button
+          fullWidth
+          onClick={() => navigate('/login')}
+          sx={{ mt: 2 }}
+        >
+          Login
         </Button>
       </Box>
     </Container>
   );
 };
 
-export default Login;
+export default Register;
