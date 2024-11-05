@@ -19,14 +19,15 @@ const Login = () => {
 
       if (response.data) {
         localStorage.setItem('token', response.data.token);
-        toast.success('Đăng nhập thành công!');
+        toast.success(response.data.message || 'Login successful!');
         navigate('/');
       }
     } catch (error) {
-      if (error instanceof AxiosError && error.response) {
-        toast.error(error.response.data.message || 'Đăng nhập thất bại');
+      if (error instanceof AxiosError) {
+        const message = error.response?.data?.message || 'Login failed';
+        toast.error(message);
       } else {
-        toast.error('Có lỗi xảy ra, vui lòng thử lại sau');
+        toast.error('An error occurred, please try again later');
       }
     }
   };

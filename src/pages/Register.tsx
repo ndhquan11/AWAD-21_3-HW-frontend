@@ -24,16 +24,16 @@ const Register = () => {
       });
 
       if (response.data) {
-        toast.success('Đăng ký thành công!');
+        toast.success(response.data.message || 'Registration successful!');
         navigate('/login');
       }
     } catch (error) {
-      if (error instanceof AxiosError && error.response) {
-        toast.error(error.message || 'Đăng ký thất bại');
+      if (error instanceof AxiosError) {
+        const message = error.response?.data?.message || 'Registration failed';
+        toast.error(message);
       } else {
-        toast.error('Có lỗi xảy ra khi đăng ký');
+        toast.error('An error occurred during registration');
       }
-      return;
     }
   };
 
