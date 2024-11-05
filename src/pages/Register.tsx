@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axiosInstance from '../config/axiosConfig';
+import { AxiosError } from 'axios';
+
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -14,8 +17,24 @@ const Register = () => {
       toast.error('Passwords do not match');
       return;
     }
-    // register logic
-    toast.info('Registering...');
+    try {
+      const response = await axiosInstance.post('auth/signup', {
+        email,
+        password
+      });
+
+      if (response.data) {
+        toast.success('Đăng ký thành công!');
+        navigate('/login');
+      }
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+        toast.error(error.message || 'Đăng ký thất bại');
+      } else {
+        toast.error('Có lỗi xảy ra khi đăng ký');
+      }
+      return;
+    }
   };
 
   return (

@@ -9,10 +9,8 @@ const axiosInstance = axios.create({
   },
 });
 
-// Interceptor cho request
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Lấy token từ localStorage nếu có
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -24,17 +22,14 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Interceptor cho response
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     if (error.response) {
-      // Xử lý các lỗi response (status code không phải 2xx)
       switch (error.response.status) {
         case 401:
-          // Xử lý lỗi unauthorized
           localStorage.removeItem('token');
           window.location.href = '/login';
           break;
