@@ -1,7 +1,8 @@
+/// <reference types="vite/client" />
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000', // URL của backend NestJS
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
