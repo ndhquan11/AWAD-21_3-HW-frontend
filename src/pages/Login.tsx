@@ -12,7 +12,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axiosInstance.post('/auth/signin', {
+      const response = await axiosInstance.post('/auth/login', {
         email,
         password
       });

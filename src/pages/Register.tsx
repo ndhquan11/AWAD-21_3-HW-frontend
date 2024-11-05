@@ -18,7 +18,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await axiosInstance.post('auth/signup', {
+      const response = await axiosInstance.post('auth/register', {
         email,
         password
       });
