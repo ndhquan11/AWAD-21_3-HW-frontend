@@ -1,26 +1,23 @@
-import { useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import axiosInstance from '../config/axiosConfig';
 import { AxiosError } from 'axios';
-
+import { registerSchema, RegisterFormData } from '../schemas/auth.schema';
 
 const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
+    resolver: yupResolver(registerSchema)
+  });
 
-  const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       const response = await axiosInstance.post('auth/register', {
-        email,
-        password
+        email: data.email,
+        password: data.password
       });
 
       if (response.data) {
@@ -39,7 +36,7 @@ const Register = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box display="flex" flexDirection="column" alignItems="center" mt={8}>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} display="flex" flexDirection="column" alignItems="center" mt={8}>
         <Typography variant="h4" gutterBottom>
           Register
         </Typography>
@@ -48,8 +45,9 @@ const Register = () => {
           variant="outlined"
           fullWidth
           margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          error={!!errors.email}
+          helperText={errors.email?.message}
+          {...register('email')}
         />
         <TextField
           label="Password"
@@ -57,8 +55,9 @@ const Register = () => {
           variant="outlined"
           fullWidth
           margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          error={!!errors.password}
+          helperText={errors.password?.message}
+          {...register('password')}
         />
         <TextField
           label="Confirm Password"
@@ -66,14 +65,15 @@ const Register = () => {
           variant="outlined"
           fullWidth
           margin="normal"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          error={!!errors.confirmPassword}
+          helperText={errors.confirmPassword?.message}
+          {...register('confirmPassword')}
         />
         <Button
+          type="submit"
           variant="contained"
           color="primary"
           fullWidth
-          onClick={handleRegister}
           sx={{ mt: 2 }}
         >
           Register

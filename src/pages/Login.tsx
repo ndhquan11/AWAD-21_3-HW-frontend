@@ -1,21 +1,21 @@
-import { useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import axiosInstance from '../config/axiosConfig';
 import { AxiosError } from 'axios';
+import { loginSchema, LoginFormData } from '../schemas/auth.schema';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+    resolver: yupResolver(loginSchema)
+  });
 
-  const handleLogin = async () => {
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      const response = await axiosInstance.post('/auth/login', {
-        email,
-        password
-      });
+      const response = await axiosInstance.post('/auth/login', data);
 
       if (response.data) {
         localStorage.setItem('token', response.data.token);
@@ -34,7 +34,7 @@ const Login = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box display="flex" flexDirection="column" alignItems="center" mt={8}>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} display="flex" flexDirection="column" alignItems="center" mt={8}>
         <Typography variant="h4" gutterBottom>
           Login
         </Typography>
@@ -43,8 +43,9 @@ const Login = () => {
           variant="outlined"
           fullWidth
           margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          error={!!errors.email}
+          helperText={errors.email?.message}
+          {...register('email')}
         />
         <TextField
           label="Password"
@@ -52,14 +53,15 @@ const Login = () => {
           variant="outlined"
           fullWidth
           margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          error={!!errors.password}
+          helperText={errors.password?.message}
+          {...register('password')}
         />
         <Button
+          type="submit"
           variant="contained"
           color="primary"
           fullWidth
-          onClick={handleLogin}
           sx={{ mt: 2 }}
         >
           Login
