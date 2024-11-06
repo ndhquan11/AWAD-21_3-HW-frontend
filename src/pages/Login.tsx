@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import axiosInstance from '../config/axiosConfig';
 import { AxiosError } from 'axios';
 import { loginSchema, LoginFormData } from '../schemas/auth.schema';
+import { useAuthStore } from '../stores/authStore';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,8 +20,7 @@ const Login = () => {
 
       if (response.data) {
         const { token, user } = response.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        useAuthStore.getState().setAuth(token, user);
         toast.success(response.data.message || 'Login successful!');
         navigate('/');
       }

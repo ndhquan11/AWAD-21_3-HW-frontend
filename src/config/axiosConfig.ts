@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 import axios from 'axios';
+import { useAuthStore } from '../stores/authStore';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -11,7 +12,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = useAuthStore.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,7 +31,7 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          localStorage.removeItem('token');
+          useAuthStore.getState().logout();
           window.location.href = '/login';
           break;
         case 403:
